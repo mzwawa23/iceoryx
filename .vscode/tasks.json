@@ -1,0 +1,26 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure and Build",
+            "type": "shell",
+            "command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON;cmake --build build --verbose -j12'",
+            "group": "build"
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "bash -c 'cd build;rm -rf cpptest-coverage/iceoryx_meta/iceoryx_meta.clog;hoofs/test/hoofs_moduletests;cpptestcov compute -clog=cpptest-coverage/iceoryx_meta/iceoryx_meta.clog -map=cpptest-coverage/iceoryx_meta/.cpptest -out=cov-data-run;cpptestcov suppress cov-data-run;cpptestcov report text cov-data-run; cpptestcov report html >> index.html cov-data-run;cpptestcov index cov-data-run'",
+            "group": "build"
+        },
+        {
+            "label": "Update Coverage",
+            "type": "shell",
+            "command": "bash -c 'cd build;cpptestcov compute -clog=cpptest-coverage/iceoryx_meta/iceoryx_meta.clog -map=cpptest-coverage/iceoryx_meta/.cpptest -out=cov-data-run;cpptestcov suppress cov-data-run;cpptestcov report text cov-data-run; cpptestcov report html >> index.html cov-data-run'",
+            "group": "build"
+        }
+
+    ]
+}
