@@ -49,8 +49,17 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: CpptestReports
+        include-hidden-files: true
         path: |
-          .coverage
+          iceoryx/.coverage/*.*
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Show Coverage HTML Link
+      shell: bash
+      run: echo "Check html report https://github.com/mzwawa23/iceoryx/coverage.html"
 
     - name: Line Coverage Quality Gate
       working-directory: ${{github.workspace}}
