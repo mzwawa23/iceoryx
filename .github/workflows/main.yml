@@ -1,0 +1,65 @@
+name: Unit testing with coverage (master)
+
+on:
+  push:
+    branches: [ feature_branch*, main ]
+  pull_request:
+    branches: [ feature_branch*, main ]
+
+env:
+  LINE_COV_GATE: 90
+  MCDC_COV_GATE: 10
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: self-hosted
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}
+      run: cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON
+
+    - name: Build 
+      working-directory: ${{github.workspace}}
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build build --verbose -j12
+
+    - name: Run Tests
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: hoofs/test/hoofs_moduletests --gtest_output=xml:gtest_results.xml 
+
+    - name: Generate Reports
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make cpptestcov-compute cpptestcov-suppress cpptestcov-report 
+ 
+    - name: Archive reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: CpptestReports
+        path: |
+          .coverage/*.*
+
+    - name: Line Coverage Quality Gate
+      working-directory: ${{github.workspace}}
+      shell: bash
+      # Query for project's coverage and compare with the gate requirements
+      run: NUMBER=$(cpptestcov query -coverage LC .coverage) && if [ $NUMBER -lt $LINE_COV_GATE ]; then echo "Line coverage quality gate failed"; echo "Expected result $LINE_COV_GATE%, achieved $NUMBER%"; false; else echo "Line coverage quality gate passed with $NUMBER% (required $LINE_COV_GATE%)"; true; fi      
+      
+    - name: MCDC Coverage Quality Gate
+      working-directory: ${{github.workspace}}
+      shell: bash
+      # Query for project's coverage and compare with the gate requirements
+      run: NUMBER=$(cpptestcov query -coverage MCDC .coverage) && if [ $NUMBER -lt $MCDC_COV_GATE ]; then echo "MCDC coverage quality gate failed"; echo "Expected result $MCDC_COV_GATE%, achieved $NUMBER%"; false; else echo "MC/DC coverage quality gate passed with $NUMBER% (required $MCDC_COV_GATE%)"; true; fi  
