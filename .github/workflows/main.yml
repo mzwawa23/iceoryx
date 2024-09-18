@@ -51,11 +51,11 @@ jobs:
         name: CpptestReports
         include-hidden-files: true
         path: |
-          iceoryx/.coverage/*.*
+          .coverage/*.*
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+   # - name: Deploy to GitHub Pages
+   #   id: deployment
+   #   uses: actions/deploy-pages@v4
 
     - name: Show Coverage HTML Link
       shell: bash
