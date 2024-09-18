@@ -50,7 +50,7 @@ jobs:
       with:
         name: CpptestReports
         path: |
-          .coverage/*.*
+          .coverage
 
     - name: Line Coverage Quality Gate
       working-directory: ${{github.workspace}}
