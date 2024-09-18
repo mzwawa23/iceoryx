@@ -37,9 +37,9 @@ endif()
 set(PREFIX iceoryx/v${CMAKE_PROJECT_VERSION})
 
 # include cpptest-coverage extension
-if(CPPTEST_COVERAGE)
-    include("${CMAKE_CURRENT_LIST_DIR}/cmake/cpptest-coverage.cmake")
-endif()
+#if(CPPTEST_COVERAGE)
+#  	include(./../cpptest-coverage.cmake)
+#endif()
 
 #
 ########## build iceoryx hoofs lib ##########

@@ -12,7 +12,14 @@
         {
             "label": "Run",
             "type": "shell",
-            "command": "bash -c 'cd build;rm -rf cpptest-coverage/iceoryx_meta/iceoryx_meta.clog;hoofs/test/hoofs_moduletests;cpptestcov compute -clog=cpptest-coverage/iceoryx_meta/iceoryx_meta.clog -map=cpptest-coverage/iceoryx_meta/.cpptest -out=cov-data-run;cpptestcov suppress cov-data-run;cpptestcov report text cov-data-run; cpptestcov report html >> index.html cov-data-run;cpptestcov index cov-data-run'",
+            "command": "bash -c 'cd build;rm -rf cpptest-coverage/iceoryx_meta/iceoryx_meta.clog;hoofs/test/hoofs_moduletests --gtest_output=xml:gtest_results.xml'",
+            "group": "build"
+        },
+        {
+            "label": "Compute logs and generate reports",
+            "type": "shell",
+            "command": "bash -c 'cd build;make cpptestcov-compute cpptestcov-suppress cpptestcov-report'",
+            //"command": "bash -c 'cd build;rm -rf cpptest-coverage/iceoryx_meta/iceoryx_meta.clog;hoofs/test/hoofs_moduletests;cpptestcov compute -clog=cpptest-coverage/iceoryx_meta/iceoryx_meta.clog -map=cpptest-coverage/iceoryx_meta/.cpptest -out=cov-data-run;cpptestcov suppress cov-data-run;cpptestcov report text cov-data-run; cpptestcov report html >> index.html cov-data-run;cpptestcov index cov-data-run'",
             "group": "build"
         },
         {
