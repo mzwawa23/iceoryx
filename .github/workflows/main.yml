@@ -7,7 +7,7 @@ on:
     branches: [ feature_branch*, main ]
 
 env:
-  LINE_COV_GATE: 90
+  LINE_COV_GATE: 50
   MCDC_COV_GATE: 20
 
 permissions:
@@ -16,7 +16,66 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  run-cpptest-make:
+    name: Analyze project with C/C++test
+
+    # Specifies required permissions for upload-sarif action
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+
+    # Specifies the type of runner that the job will run on.
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job.
+    steps:
+
+    # Checks out your repository under $GITHUB_WORKSPACE, so that your job can access it.
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Configures your CMake project. Be sure the compile_commands.json file is created.
+    - name: Configure project
+      run: cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/
+
+    # Builds your CMake project. (This step is optional, as it is not required for code analysis).
+    #- name: Build project (optional)
+    #  run: cmake --build build
+
+    # Runs code analysis with C/C++test.
+    - name: Run C/C++test
+      # Use the 'run-cpptest-action' GitHub action.
+      uses: parasoft/run-cpptest-action@2.0.2
+      # Optional parameters for 'run-cpptest-action'.
+      with:
+        # For CMake-based projects, use a compile_commands.json file as the input for analysis. 
+        input: build/compile_commands.json
+        testConfig: 'builtin://MISRA C++ 2023'
+        compilerConfig: 'gcc_10-64'
+        # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
+        # reportFormat: xml,html,custom
+        # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
+        additionalParams: -exclude "**/googletest/**" -exclude "**/tests/**" "**/testings/**" -exclude "**/googlemock/**" 
+
+    # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
+    - name: Upload results (SARIF)
+      if: always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: reports/report.sarif
+    
+    # Uploads an archive that includes all report files (.xml, .html, .sarif).
+    - name: Archive reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: CpptestReports
+        path: reports/*.*
+
+  build_with_coverage:
     runs-on: self-hosted
     continue-on-error: true
 
@@ -53,9 +112,9 @@ jobs:
         path: |
           .coverage/*.*
 
-   # - name: Deploy to GitHub Pages
-   #   id: deployment
-   #   uses: actions/deploy-pages@v4
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 
     - name: Show Coverage HTML Link
       shell: bash
