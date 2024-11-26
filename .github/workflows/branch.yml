@@ -2,9 +2,9 @@ name: Unit testing with coverage (master)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature_branch* ]
   pull_request:
-    branches: [ main ]
+    branches: [ feature_branch* ]
 
 env:
   LINE_COV_GATE: 50
