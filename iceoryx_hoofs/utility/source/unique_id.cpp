@@ -15,6 +15,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "iox/detail/unique_id.hpp"
+#include <stdio.h>
+
+class IOException {};
+
+int* readIntegerArray(FILE* file, int* pSize)
+{
+    fscanf(file, "%d", pSize);
+    int* data = new int[*pSize]; // parasoft-suppress BD-SECURITY-TDALLOC "accepted in this case"
+    try {
+        for (int i = 0; i < *pSize; i++) {
+            if (fscanf(file, "%d", &data[i]) == EOF) {
+                throw IOException();
+            }
+        }
+    } catch (...) {
+        delete[] data;
+        throw;
+    }
+    return data;
+}
 
 namespace iox
 {
