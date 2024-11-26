@@ -8,7 +8,7 @@ on:
 
 env:
   LINE_COV_GATE: 90
-  MCDC_COV_GATE: 10
+  MCDC_COV_GATE: 20
 
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}
-      run: cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON
+      run: cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/
 
     - name: Build 
       working-directory: ${{github.workspace}}

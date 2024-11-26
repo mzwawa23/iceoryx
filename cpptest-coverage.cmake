@@ -20,7 +20,7 @@ function (cpptest_enable_coverage)
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
   else()
     set(CPPTEST_BINARY_DIR "${CMAKE_BINARY_DIR}")
-    set(CPPTEST_SOURCE_DIR "${CMAKE_SOURCE_DIR}/..")
+    set(CPPTEST_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
   endif()
 
   # Configure C/C++test compiler identifier
@@ -73,8 +73,9 @@ function (cpptest_enable_coverage)
         "${CMAKE_SHARED_LINKER_FLAGS} ${CPPTEST_LINKER_FLAGS}"
         PARENT_SCOPE)
   else()
-    set(CPPTEST_LINKER_FLAGS
-        "-Wl,--whole-archive \"${CPPTEST_RUNTIME_BUILD_DIR}/libcpptest_static.a\" -Wl,--no-whole-archive")
+    #set(CPPTEST_LINKER_FLAGS
+    # "-Wl,--whole-archive \"${CPPTEST_RUNTIME_BUILD_DIR}/libcpptest_static.a\" -Wl,--no-whole-archive")
+     set(CODE_COVERAGE_LIBS ${CPPTEST_RUNTIME_BUILD_DIR}/libcpptest_static.a PARENT_SCOPE)
   endif()
 
   # Add C/C++test coverage runtime library to executable linker flags
@@ -93,10 +94,17 @@ function (cpptest_enable_coverage)
       -workspace "${CPPTEST_COVERAGE_WORKSPACE}"
       -compiler ${CPPTEST_COMPILER_ID}
       ${CPPTEST_COVERAGE_TYPE_INSTRUMENTATION}
+      -ignore "regex:*/iceoryx_hoofs/test/integrationtests/*"
+      -ignore "regex:*/iceoryx_posh/*"
+      -ignore "regex:*/iceoryx_platform/*"
       -exclude "regex:*"
-      -include "regex:${CPPTEST_SOURCE_DIR}/iceoryx_hoofs/*"
+     # -include "regex:*/iceoryx_hoofs/container/include/iox/detail/vector.inl"
+      -include "regex:*/iceoryx_hoofs/*"
+      -exclude "regex:*/iceoryx_hoofs/test/modultests/*.cpp"
       -exclude "regex:${CPPTEST_BINARY_DIR}/*"
       -ignore "regex:*_test.cpp"
+      -ignore "regex:*/test/*"
+      -ignore "regex:*/testing/*"
       -ignore "regex:${CPPTEST_BINARY_DIR}/*")
 
   # Use advanced settings file for cpptestcc, if exists
@@ -128,6 +136,7 @@ function (cpptest_enable_coverage)
         -clog="${CPPTEST_COVERAGE_LOG_FILE}"
         -out="${CPPTEST_SOURCE_DIR}/.coverage"
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
+        -ignore-clog-integrity-error
     &&
     ${CPPTEST_HOME_DIR}/bin/cpptestcov index
         "${CPPTEST_SOURCE_DIR}/.coverage"   
