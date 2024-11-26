@@ -4,6 +4,13 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Configure",
+            "type": "shell",
+            "command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/'",
+            //"command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON;cmake --build build --verbose -j12'",
+            "group": "build"
+        },
+        {
             "label": "Configure and Build",
             "type": "shell",
             "command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/; cd build; make -j12'",
