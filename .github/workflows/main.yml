@@ -94,11 +94,13 @@ jobs:
       run: make VERBOSE=1 -j12
 
     - name: Run Tests
+      if: always()
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: hoofs/test/hoofs_moduletests --gtest_output=xml:gtest_results.xml 
 
     - name: Generate Reports
+      if: always()
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make cpptestcov-compute cpptestcov-suppress cpptestcov-report 
