@@ -135,7 +135,7 @@ jobs:
       id: deployment
       uses: actions/deploy-pages@v2
 
-      - name: Line Coverage Quality Gate
+    - name: Line Coverage Quality Gate
       working-directory: ${{github.workspace}}
       shell: bash
       # Query for project's coverage and compare with the gate requirements     
