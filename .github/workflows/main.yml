@@ -2,9 +2,9 @@ name: Unit testing with coverage (master)
 
 on:
   push:
-    branches: [ feature_branch*, main ]
+    branches: [ main ]
   pull_request:
-    branches: [ feature_branch*, main ]
+    branches: [ main ]
 
 env:
   LINE_COV_GATE: 50
@@ -82,6 +82,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set build id
+      shell: bash
+      working-directory: ${{github.workspace}}
+      run: echo "build_id=build-$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_ENV 
+
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}
@@ -92,6 +97,12 @@ jobs:
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: make VERBOSE=1 -j12
+
+    - name: Coverage Logs Cleanup
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: rm -rf cpptest-coverage/*/*.clog      
 
     - name: Run Tests
       working-directory: ${{github.workspace}}/build
@@ -112,22 +123,26 @@ jobs:
         path: |
           .coverage/*.*
 
-    #- name: Deploy to GitHub Pages
-    #  id: deployment
-    #  uses: actions/deploy-pages@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
 
-    - name: Show Coverage HTML Link
-      shell: bash
-      run: echo "Check html report https://github.com/mzwawa23/iceoryx/coverage.html"
+    - name: Upload Artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: ${{github.workspace}}/.coverage
 
-    - name: Line Coverage Quality Gate
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+
+      - name: Line Coverage Quality Gate
       working-directory: ${{github.workspace}}
       shell: bash
-      # Query for project's coverage and compare with the gate requirements
-      run: NUMBER=$(cpptestcov query -coverage LC .coverage) && if [ $NUMBER -lt $LINE_COV_GATE ]; then echo "Line coverage quality gate failed"; echo "Expected result $LINE_COV_GATE%, achieved $NUMBER%"; false; else echo "Line coverage quality gate passed with $NUMBER% (required $LINE_COV_GATE%)"; true; fi      
+      # Query for project's coverage and compare with the gate requirements     
+      run: NUMBER=$(cpptestcov query -coverage LC .coverage) && if [[ $NUMBER -lt $LINE_COV_GATE ]]; then echo "Line coverage quality gate failed"; echo "Expected result $LINE_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "Line coverage quality gate passed with $NUMBER% (required $LINE_COV_GATE %)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
       
     - name: MCDC Coverage Quality Gate
       working-directory: ${{github.workspace}}
       shell: bash
       # Query for project's coverage and compare with the gate requirements
-      run: NUMBER=$(cpptestcov query -coverage MCDC .coverage) && if [ $NUMBER -lt $MCDC_COV_GATE ]; then echo "MCDC coverage quality gate failed"; echo "Expected result $MCDC_COV_GATE%, achieved $NUMBER%"; false; else echo "MC/DC coverage quality gate passed with $NUMBER% (required $MCDC_COV_GATE%)"; true; fi  
+      run: NUMBER=$(cpptestcov query -coverage MCDC .coverage) && if [[ $NUMBER -lt $MCDC_COV_GATE ]]; then echo "MCDC coverage quality gate failed"; echo "Expected result $MCDC_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "MCDC coverage quality gate passed with $NUMBER% (required $MCDC_COV_GATE%)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
