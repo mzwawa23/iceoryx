@@ -21,14 +21,14 @@ function (cpptest_enable_coverage)
   else()
     set(CPPTEST_BINARY_DIR "${CMAKE_BINARY_DIR}")
     set(CPPTEST_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-  endif()
+  endif() 
 
   # Configure C/C++test compiler identifier
-  set(CPPTEST_COMPILER_ID "gcc_9-64")
+  set(CPPTEST_COMPILER_ID "gcc_11-64")
   # Configure coverage type(s) for instrumentation engine - see 'cpptestcc -help' for details
-  set(CPPTEST_COVERAGE_TYPE_INSTRUMENTATION -template-coverage -line-coverage -statement-coverage -block-coverage -decision-coverage -simple-condition-coverage -mcdc-coverage -function-coverage -call-coverage)
+  set(CPPTEST_COVERAGE_TYPE_INSTRUMENTATION -template-coverage -constexpr-coverage -line-coverage -statement-coverage -block-coverage -decision-coverage -simple-condition-coverage -mcdc-coverage -function-coverage -call-coverage)
   # Configure coverage type(s) for reporting engine - see 'cpptestcov -help' for details
-  set(CPPTEST_COVERAGE_TYPE_REPORT "LC,SC,BC,DC,SCC,MCDC,FC,CC" )
+  set(CPPTEST_COVERAGE_TYPE_REPORT "LC, SC, DC,MCDC" )
   # Configure C/C++test project name
   set(CPPTEST_PROJECT_NAME ${CMAKE_PROJECT_NAME})
   # Configure coverage workspace folder
@@ -95,7 +95,8 @@ function (cpptest_enable_coverage)
       -exclude "regex:${CPPTEST_SOURCE_DIR}/test/*"
       #-include "regex:${CPPTEST_SOURCE_DIR}/include/*"
       -exclude "regex:${CPPTEST_BINARY_DIR}/*"
-      -ignore "regex:${CPPTEST_BINARY_DIR}/*")
+      -ignore "regex:${CPPTEST_BINARY_DIR}/*"
+      -psrc "${CPPTEST_SOURCE_DIR}/cmake/.cpptestcc")
 
   # Use advanced settings file for cpptestcc, if exists
   if(EXISTS "${CMAKE_SOURCE_DIR}/.cpptestcc")
@@ -121,7 +122,7 @@ function (cpptest_enable_coverage)
     COMMAND
     mkdir -p "${CPPTEST_SOURCE_DIR}/.coverage"
     &&
-    ${CPPTEST_HOME_DIR}/bin/cpptestcov compute -scm
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov compute 
         -map="${CPPTEST_COVERAGE_WORKSPACE}/.cpptest/cpptestcc"
         -clog="${CPPTEST_COVERAGE_LOG_FILE}"
         -out="${CPPTEST_SOURCE_DIR}/.coverage"
@@ -148,10 +149,10 @@ function (cpptest_enable_coverage)
         "${CPPTEST_SOURCE_DIR}/.coverage" >
         "${CPPTEST_SOURCE_DIR}/.coverage/coverage.md"
     &&
-    ${CPPTEST_HOME_DIR}/bin/cpptestcov report html
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov report html-multipage
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
-        "${CPPTEST_SOURCE_DIR}/.coverage" >
-        "${CPPTEST_SOURCE_DIR}/.coverage/coverage.html"
+        -code -out "${CPPTEST_SOURCE_DIR}/.coverage/"
+        "${CPPTEST_SOURCE_DIR}/.coverage"
     &&
     ${CPPTEST_HOME_DIR}/bin/cpptestcov report text
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
