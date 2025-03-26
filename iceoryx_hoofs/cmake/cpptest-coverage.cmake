@@ -96,7 +96,8 @@ function (cpptest_enable_coverage)
       #-include "regex:${CPPTEST_SOURCE_DIR}/include/*"
       -exclude "regex:${CPPTEST_BINARY_DIR}/*"
       -ignore "regex:${CPPTEST_BINARY_DIR}/*"
-      -psrc "${CPPTEST_SOURCE_DIR}/cmake/.cpptestcc")
+  #    -psrc "${CPPTEST_SOURCE_DIR}/cmake/.cpptestcc")
+  )
 
   # Use advanced settings file for cpptestcc, if exists
   if(EXISTS "${CMAKE_SOURCE_DIR}/.cpptestcc")
@@ -149,14 +150,27 @@ function (cpptest_enable_coverage)
         "${CPPTEST_SOURCE_DIR}/.coverage" >
         "${CPPTEST_SOURCE_DIR}/.coverage/coverage.md"
     &&
-    ${CPPTEST_HOME_DIR}/bin/cpptestcov report html-multipage
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov report html
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
-        -code -out "${CPPTEST_SOURCE_DIR}/.coverage/"
+        -code 
+        -root "${CPPTEST_SOURCE_DIR}"
+        -out "${CPPTEST_SOURCE_DIR}/.coverage/report.html"
         "${CPPTEST_SOURCE_DIR}/.coverage"
     &&
     ${CPPTEST_HOME_DIR}/bin/cpptestcov report text
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
         "${CPPTEST_SOURCE_DIR}/.coverage"
+    &&
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov report mcdc
+        "${CPPTEST_SOURCE_DIR}/.coverage"
+    &&
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov report json
+        -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
+        "${CPPTEST_SOURCE_DIR}/.coverage" >> report.json
+    &&
+    ${CPPTEST_HOME_DIR}/bin/cpptestcov report cobertura
+        "${CPPTEST_SOURCE_DIR}/.coverage" > 
+        "${CPPTEST_SOURCE_DIR}/.coverage/coverage_cubertura.xml"
   )
 
   # Apply coverage suppressions to existing coverage data files
