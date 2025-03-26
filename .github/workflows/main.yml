@@ -121,7 +121,7 @@ jobs:
         name: CoverageReports
         include-hidden-files: true
         path: |
-          .coverage/*.*
+          iceoryx_hoofs/.coverage/*.*
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -135,7 +135,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ${{github.workspace}}/.coverage
+        path: ${{github.workspace}}/iceoryx_hoofs/.coverage
 
     - name: Deploy to GitHub Pages
       id: deployment
@@ -145,10 +145,10 @@ jobs:
       working-directory: ${{github.workspace}}
       shell: bash
       # Query for project's coverage and compare with the gate requirements     
-      run: NUMBER=$(cpptestcov query -coverage LC .coverage) && if [[ $NUMBER -lt $LINE_COV_GATE ]]; then echo "Line coverage quality gate failed"; echo "Expected result $LINE_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "Line coverage quality gate passed with $NUMBER% (required $LINE_COV_GATE %)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
+      run: NUMBER=$(cpptestcov query -coverage LC iceoryx_hoofs/.coverage) && if [[ $NUMBER -lt $LINE_COV_GATE ]]; then echo "Line coverage quality gate failed"; echo "Expected result $LINE_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "Line coverage quality gate passed with $NUMBER% (required $LINE_COV_GATE %)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
       
     - name: MCDC Coverage Quality Gate
       working-directory: ${{github.workspace}}
       shell: bash
       # Query for project's coverage and compare with the gate requirements
-      run: NUMBER=$(cpptestcov query -coverage MCDC .coverage) && if [[ $NUMBER -lt $MCDC_COV_GATE ]]; then echo "MCDC coverage quality gate failed"; echo "Expected result $MCDC_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "MCDC coverage quality gate passed with $NUMBER% (required $MCDC_COV_GATE%)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
+      run: NUMBER=$(cpptestcov query -coverage MCDC iceoryx_hoofs/.coverage) && if [[ $NUMBER -lt $MCDC_COV_GATE ]]; then echo "MCDC coverage quality gate failed"; echo "Expected result $MCDC_COV_GATE%, echieved $NUMBER%"; echo "Check html report https://mzwawa23.github.io/atm_cpp14/report.html"; false; else echo "MCDC coverage quality gate passed with $NUMBER% (required $MCDC_COV_GATE%)"; echo "check html report https://mzwawa23.github.io/iceoryx/coverage.html for details"; true; fi      
