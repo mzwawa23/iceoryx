@@ -7,8 +7,8 @@ on:
     branches: [ main* ]
 
 env:
-  LINE_COV_GATE: 50
-  MCDC_COV_GATE: 20
+  LINE_COV_GATE: 70
+  MCDC_COV_GATE: 40
 
 permissions:
   contents: read
@@ -85,7 +85,7 @@ jobs:
    # url: ##${{ steps.deployment.outputs.page_url }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set build id
       shell: bash
