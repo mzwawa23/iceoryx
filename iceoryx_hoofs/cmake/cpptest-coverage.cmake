@@ -28,7 +28,7 @@ function (cpptest_enable_coverage)
   # Configure coverage type(s) for instrumentation engine - see 'cpptestcc -help' for details
   set(CPPTEST_COVERAGE_TYPE_INSTRUMENTATION -template-coverage -constexpr-coverage -line-coverage -statement-coverage -block-coverage -decision-coverage -simple-condition-coverage -mcdc-coverage -function-coverage -call-coverage)
   # Configure coverage type(s) for reporting engine - see 'cpptestcov -help' for details
-  set(CPPTEST_COVERAGE_TYPE_REPORT "LC,SC,BC,DC,CC,MCDC" )
+  set(CPPTEST_COVERAGE_TYPE_REPORT "LC,SC,FC,BC,DC,CC,MCDC,SCC")
   # Configure C/C++test project name
   set(CPPTEST_PROJECT_NAME ${CMAKE_PROJECT_NAME})
   # Configure coverage workspace folder
@@ -154,7 +154,7 @@ function (cpptest_enable_coverage)
         -coverage=${CPPTEST_COVERAGE_TYPE_REPORT}
         -code 
         -root "${CPPTEST_SOURCE_DIR}"
-        -out "${CPPTEST_SOURCE_DIR}/.coverage/report.html"
+        -out "${CPPTEST_SOURCE_DIR}/.coverage/coverage.html"
         "${CPPTEST_SOURCE_DIR}/.coverage"
     &&
     ${CPPTEST_HOME_DIR}/bin/cpptestcov report text
