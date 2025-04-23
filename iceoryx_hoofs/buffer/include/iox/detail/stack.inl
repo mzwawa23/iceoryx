@@ -35,7 +35,6 @@ inline stack<T, Capacity>& stack<T, Capacity>::copy(const stack& rhs) noexcept
     // copy c'tor
     for (; i < rhsSize; i++)
     {
-        // AXIVION Next Line AutosarC++19_03-A18.5.2 : false positive, it is a placement new
         new (&m_data[i]) T(rhs.getUnchecked(i));
     }
     // delete remaining elements
