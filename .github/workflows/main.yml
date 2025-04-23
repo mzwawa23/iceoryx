@@ -76,15 +76,6 @@ jobs:
         name: CpptestReports
         path: reports/*.*
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-
-    - name: View report
-      run: |
-        echo "View report at: https://$GITHUB_REPOSITORY_OWNER.github.io/$GITHUB_REPOSITORY/${{ steps.deployment.outputs.page_url }}/reports/report.html"
-      working-directory: ${{github.workspace}}
-      shell: bash
 
   build_with_coverage:
     runs-on: self-hosted
