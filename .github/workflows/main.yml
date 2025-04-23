@@ -46,10 +46,6 @@ jobs:
     #- name: Build project (optional)
     #  run: cmake --build build
 
-    - name: Add cpptestcli properties
-      run: / 
-          echo "scontrol.rep1.git.workspace=${{github.workspace}}" >> settings.properties 
-
     # Runs code analysis with C/C++test.
     - name: Run C/C++test
       # Use the 'run-cpptest-action' GitHub action.
@@ -63,7 +59,7 @@ jobs:
         # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
         # reportFormat: xml,html,custom
         # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
-        additionalParams: -resource ${{github.workspace}}/iceoryx_hoofs -showdetails -settings settings.properties -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**"
+        additionalParams: -resource ${{github.workspace}}/iceoryx_hoofs -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}}
 
     # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
     - name: Upload results (SARIF)
