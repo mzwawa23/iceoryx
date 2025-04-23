@@ -70,7 +70,7 @@ jobs:
     - name: Publish Reports to DTP
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: cpptestcov report dtp -coverage="LC,SC,BC,DC,SCC,MCDC,FC,CC" ../.coverage gtest_results.xml -root .. -settings ../cpptestcli.properties -property report.coverage.images="AllCov;gtestCov" -property dtp.project=${{env.DTP_PROJECT}}
+      run: cpptestcov report dtp -coverage="LC,SC,BC,DC,SCC,MCDC,FC,CC" ../iceoryx_hoofs/.coverage  gtest_results.xml -root .. -settings ../cpptestcli.properties -property report.coverage.images="AllCov;gtestCov" -property dtp.project=${{env.DTP_PROJECT}}
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
