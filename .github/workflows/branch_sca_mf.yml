@@ -2,7 +2,7 @@ name: Static code analysis (branch)
 
 on:
   push:
-    branches: [ feature_branch_0* ]
+    branches: [ feature_branch_* ]
 
 permissions:
   contents: read
@@ -21,6 +21,8 @@ jobs:
       # only required for workflows in private repositories
       actions: read
       contents: read
+      pages: write
+      id-token: write
 
     # Specifies the type of runner that the job will run on.
     runs-on: self-hosted
@@ -79,8 +81,7 @@ jobs:
         # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
         # reportFormat: xml,html,custom
         # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
-        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -include iceoryx_hoofs/cmake/modified.lst
-# -resource ${{github.workspace}}/iceoryx_hoofs
+        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -resource ${{github.workspace}}/iceoryx_hoofs/posix/vocabulary
 
     # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
     - name: Upload results (SARIF)
@@ -97,4 +98,27 @@ jobs:
         name: CpptestReports
         path: reports/*.*
 
- 
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+  
+    - name: Fix permissions
+      run: |
+        chmod -c -R +rX "_site/" | while read line; do
+          echo "::warning title=Invalid file permissions automatically fixed::$line"
+        done
+  
+    - name: Upload Artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ${{github.workspace}}/iceoryx_hoofs/reports
+  
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+  
+    - name: Show HTML report
+      working-directory: ${{github.workspace}}/reports
+      shell: bash
+        # Query for project's coverage and compare with the gate requirements     
+      run:  echo "check html report https://mzwawa23.github.io/iceoryx/report.html for details"
+   

@@ -2,7 +2,7 @@ name: Unit testing with coverage (branch)
 
 on:
   push:
-    branches: [ feature_branch*]
+    branches: [ feature_branch_10*]
 
 env:
   LINE_COV_GATE: 90

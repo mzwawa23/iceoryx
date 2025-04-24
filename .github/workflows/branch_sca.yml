@@ -2,7 +2,7 @@ name: Static code analysis (branch)
 
 on:
   push:
-    branches: [ feature_branch* ]
+    branches: [ feature_branch_10* ]
 
 permissions:
   contents: read
