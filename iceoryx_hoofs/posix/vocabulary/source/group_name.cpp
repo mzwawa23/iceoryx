@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
+ 
 #include "iceoryx_platform/platform_settings.hpp"
 #include "iox/filesystem.hpp"
 #include "iox/string.hpp"
