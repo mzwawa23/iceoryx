@@ -81,7 +81,7 @@ jobs:
         # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
         # reportFormat: xml,html,custom
         # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
-        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -include $CPPTEST_CC_PSRC
+        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -include iceoryx_hoofs/cmake/modified.lst
 # -resource ${{github.workspace}}/iceoryx_hoofs
 
     # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
