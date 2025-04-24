@@ -2,7 +2,7 @@ name: Static code analysis (branch)
 
 on:
   push:
-    branches: [ feature_branch* ]
+    branches: [ feature_branch_0* ]
 
 permissions:
   contents: read
@@ -33,6 +33,31 @@ jobs:
       uses: actions/checkout@v4
 
 
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v46
+      # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
+      with:
+        files: |
+          **.inl
+          **.cpp
+        files_ignore: |
+          **/test_*.cpp
+
+    - name: Prepare excludes
+      if: steps.changed-files.outputs.any_changed == 'true'
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        CPPTEST_CC_PSRC: iceoryx_hoofs/cmake/modified.lst
+      run: |
+        list=( $ALL_CHANGED_FILES )
+        for file in ${list[@]}; do
+          echo "${{github.workspace}}/$file" >> $CPPTEST_CC_PSRC
+        done
+        ls -la $CPPTEST_CC_PSRC
+        cat $CPPTEST_CC_PSRC
+
+
     # Configures your CMake project. Be sure the compile_commands.json file is created.
     - name: Configure project
       run: cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/
@@ -54,7 +79,8 @@ jobs:
         # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
         # reportFormat: xml,html,custom
         # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
-        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -resource ${{github.workspace}}/iceoryx_hoofs
+        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -include iceoryx_hoofs/cmake/modified.lst
+# -resource ${{github.workspace}}/iceoryx_hoofs
 
     # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
     - name: Upload results (SARIF)
