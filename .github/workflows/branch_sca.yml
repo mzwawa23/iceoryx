@@ -54,7 +54,7 @@ jobs:
       run: |
         list=( $ALL_CHANGED_FILES )
         for file in ${list[@]}; do
-          echo "*$file" >> $CPPTEST_CC_PSRC
+          echo "$file" >> $CPPTEST_CC_PSRC
         done
         ls -la $CPPTEST_CC_PSRC
         cat $CPPTEST_CC_PSRC
@@ -81,7 +81,7 @@ jobs:
         # Uncomment if you are using C/C++test 2020.2 to generate a SARIF report:
         # reportFormat: xml,html,custom
         # additionalParams: '-property report.custom.extension=sarif -property report.custom.xsl.file=${PARASOFT_SARIF_XSL}'
-        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -include $CPPTEST_CC_PSRC -property scontrol.rep1.git.workspace=${{github.workspace}}
+        additionalParams: -showdetails -exclude "**/googletest/**" -exclude "**/test/**" -exclude "**/testing/**" -exclude "**/googlemock/**" -exclude "**/iceoryx_examples/**" -property scontrol.rep1.git.workspace=${{github.workspace}} -include $CPPTEST_CC_PSRC
 # -resource ${{github.workspace}}/iceoryx_hoofs
 
     # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
