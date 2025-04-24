@@ -54,7 +54,7 @@ jobs:
       run: |
         list=( $ALL_CHANGED_FILES )
         for file in ${list[@]}; do
-          echo "$file" >> $CPPTEST_CC_PSRC
+          echo "${{github.workspace}}/$file" >> $CPPTEST_CC_PSRC
         done
         ls -la $CPPTEST_CC_PSRC
         cat $CPPTEST_CC_PSRC
