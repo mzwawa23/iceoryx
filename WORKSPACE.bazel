@@ -24,4 +24,7 @@ load_repositories()
 # Load dependency cpptoml
 load("//bazel:setup_repositories.bzl", "setup_repositories")
 
+#C/C++test installation location
+local_repository(name = "cpptest", path = "/opt/parasoft/cpptest_std/cpptest")
+
 setup_repositories()

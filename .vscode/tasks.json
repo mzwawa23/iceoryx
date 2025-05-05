@@ -4,14 +4,14 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Configure",
+            "label": "Configure - Cmake",
             "type": "shell",
             "command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/'",
             //"command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON;cmake --build build --verbose -j12'",
             "group": "build"
         },
         {
-            "label": "Configure and Build",
+            "label": "Configure and Build - Cmake",
             "type": "shell",
             "command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DINTROSPECTION=OFF -DBINDING_C=OFF -DCPPTEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=$(pwd)/build/dependencies/; cd build; make -j12'",
             //"command": "bash -c 'mkdir build;cmake -Bbuild -Hiceoryx_meta -DBUILD_TEST=ON -DCPPTEST_COVERAGE=ON;cmake --build build --verbose -j12'",
@@ -34,6 +34,12 @@
             "label": "Update Coverage",
             "type": "shell",
             "command": "bash -c 'cd build;cpptestcov compute -clog=cpptest-coverage/iceoryx_meta/iceoryx_meta.clog -map=cpptest-coverage/iceoryx_meta/.cpptest -out=cov-data-run;cpptestcov suppress cov-data-run;cpptestcov report text cov-data-run; cpptestcov report html >> index.html cov-data-run'",
+            "group": "build"
+        },
+        {
+            "label": "Configure - Bazel",
+            "type": "shell",
+            "command": "bash -c 'bazel run @cpptest//:bdf --@cpptest//:target=//iceoryx_hoofs:iceoryx_hoofs --@cpptest//:compiler-config=gcc_9-64 --@cpptest//:project-name=iceoryx_hoofs --incompatible_enable_cc_toolchain_resolution=false'",
             "group": "build"
         }
 
